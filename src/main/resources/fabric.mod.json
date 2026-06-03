@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "my-tweaks",
+  "version": "${version}",
+  "name": "My Tweaks",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/my-tweaks/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-datagen": [
+      "com.yutadev31.myTweaks.client.MyTweaksDataGenerator"
+    ],
+    "client": [
+      "com.yutadev31.myTweaks.client.MyTweaksClient"
+    ],
+    "main": [
+      "com.yutadev31.myTweaks.MyTweaks"
+    ]
+  },
+  "mixins": [
+    "my-tweaks.mixins.json",
+    {
+      "config": "my-tweaks.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
