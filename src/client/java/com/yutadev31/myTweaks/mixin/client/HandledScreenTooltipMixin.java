@@ -17,6 +17,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HandledScreen.class)
 abstract class HandledScreenTooltipMixin<T extends ScreenHandler> {
+    private static final int STACK_SIZE = 64;
+    private static final int SHULKER_BOX_STACK_COUNT = 27;
+    private static final int SHULKER_BOX_ITEM_COUNT = STACK_SIZE * SHULKER_BOX_STACK_COUNT;
+
     @Shadow protected T handler;
     @Shadow protected Slot focusedSlot;
 
@@ -40,7 +44,43 @@ abstract class HandledScreenTooltipMixin<T extends ScreenHandler> {
         }
 
         List<Text> tooltip = new ArrayList<>(cir.getReturnValue());
-        tooltip.add(Text.literal("現在の画面内合計: " + totalCount).formatted(Formatting.DARK_GRAY));
+        tooltip.add(Text.literal("現在の画面内合計: " + formatTotalCount(totalCount)).formatted(Formatting.DARK_GRAY));
         cir.setReturnValue(tooltip);
+    }
+
+    private static String formatTotalCount(int totalCount) {
+        if (totalCount < STACK_SIZE) {
+            return Integer.toString(totalCount);
+        }
+
+        int shulkerBoxes = totalCount / SHULKER_BOX_ITEM_COUNT;
+        int remainder = totalCount % SHULKER_BOX_ITEM_COUNT;
+        int stacks = remainder / STACK_SIZE;
+        int items = remainder % STACK_SIZE;
+
+        StringBuilder builder = new StringBuilder()
+            .append(totalCount)
+            .append(" (");
+        boolean appended = false;
+
+        if (shulkerBoxes > 0) {
+            builder.append(shulkerBoxes).append("sb");
+            appended = true;
+        }
+        if (stacks > 0) {
+            if (appended) {
+                builder.append(" + ");
+            }
+            builder.append(stacks).append("st");
+            appended = true;
+        }
+        if (items > 0 || !appended) {
+            if (appended) {
+                builder.append(" + ");
+            }
+            builder.append(items);
+        }
+
+        return builder.append(')').toString();
     }
 }
