@@ -6,6 +6,7 @@ public class MyTweaksClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        MyTweaksConfig.load();
         JourneyMapChatImportFeature.initialize();
     }
 }

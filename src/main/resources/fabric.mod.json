@@ -16,6 +16,9 @@
     "client": [
       "com.yutadev31.myTweaks.client.MyTweaksClient"
     ],
+    "modmenu": [
+      "com.yutadev31.myTweaks.client.MyTweaksModMenuIntegration"
+    ],
     "main": [
       "com.yutadev31.myTweaks.MyTweaks"
     ]

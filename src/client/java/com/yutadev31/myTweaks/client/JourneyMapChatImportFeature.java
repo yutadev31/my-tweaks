@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.message.MessageHandler;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
@@ -21,17 +20,20 @@ import net.minecraft.util.Formatting;
 
 final class JourneyMapChatImportFeature {
     private static final String IMPORT_COMMAND = "mytweaks-jm-import";
+    private static final String CONFIG_COMMAND = "mytweaks-config";
     private static boolean addingPrompt;
 
     private JourneyMapChatImportFeature() {
     }
 
     static void initialize() {
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(ClientCommandManager.literal(IMPORT_COMMAND)
                 .then(ClientCommandManager.argument("payload", StringArgumentType.word())
-                    .executes(JourneyMapChatImportFeature::runImportCommand)))
-        );
+                    .executes(JourneyMapChatImportFeature::runImportCommand)));
+            dispatcher.register(ClientCommandManager.literal(CONFIG_COMMAND)
+                .executes(JourneyMapChatImportFeature::openConfigScreen));
+        });
         ClientReceiveMessageEvents.CHAT.register((message, signedMessage, sender, params, receptionTimestamp) ->
             maybeShowImportPrompt(message, false)
         );
@@ -52,7 +54,7 @@ final class JourneyMapChatImportFeature {
     }
 
     private static void maybeShowImportPrompt(Text message, boolean overlay) {
-        if (overlay || addingPrompt) {
+        if (overlay || addingPrompt || !MyTweaksConfig.get().isJourneyMapChatImportEnabled()) {
             return;
         }
 
@@ -90,5 +92,11 @@ final class JourneyMapChatImportFeature {
             .append(Text.literal(share.name()).formatted(Formatting.AQUA))
             .append(Text.literal(" "))
             .append(action);
+    }
+
+    private static int openConfigScreen(CommandContext<FabricClientCommandSource> context) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        client.execute(() -> client.setScreen(MyTweaksConfigScreen.create(client.currentScreen)));
+        return 1;
     }
 }
