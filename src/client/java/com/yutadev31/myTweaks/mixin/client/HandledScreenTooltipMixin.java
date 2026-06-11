@@ -3,6 +3,8 @@ package com.yutadev31.myTweaks.mixin.client;
 import com.yutadev31.myTweaks.client.MyTweaksConfig;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
@@ -35,17 +37,66 @@ abstract class HandledScreenTooltipMixin<T extends ScreenHandler> {
             return;
         }
 
+        ItemStack targetStack = resolveTargetStack(focusedStack);
+        if (targetStack.isEmpty()) {
+            return;
+        }
+
         int totalCount = 0;
         for (Slot slot : handler.slots) {
-            ItemStack slotStack = slot.getStack();
-            if (!slotStack.isEmpty() && ItemStack.areItemsAndComponentsEqual(stack, slotStack)) {
-                totalCount += slotStack.getCount();
-            }
+            totalCount += countMatchingItems(slot.getStack(), targetStack);
         }
 
         List<Text> tooltip = new ArrayList<>(cir.getReturnValue());
         tooltip.add(Text.literal("現在の画面内合計: " + formatTotalCount(totalCount)).formatted(Formatting.DARK_GRAY));
         cir.setReturnValue(tooltip);
+    }
+
+    private static ItemStack resolveTargetStack(ItemStack hoveredStack) {
+        ItemStack containedItem = getSingleContainedItem(hoveredStack);
+        return containedItem.isEmpty() ? hoveredStack : containedItem;
+    }
+
+    private static int countMatchingItems(ItemStack stack, ItemStack targetStack) {
+        if (stack.isEmpty()) {
+            return 0;
+        }
+
+        int totalCount = 0;
+        if (ItemStack.areItemsAndComponentsEqual(stack, targetStack)) {
+            totalCount += stack.getCount();
+        }
+
+        ContainerComponent container = stack.get(DataComponentTypes.CONTAINER);
+        if (container == null) {
+            return totalCount;
+        }
+
+        for (ItemStack containedStack : container.iterateNonEmpty()) {
+            totalCount += countMatchingItems(containedStack, targetStack) * stack.getCount();
+        }
+        return totalCount;
+    }
+
+    private static ItemStack getSingleContainedItem(ItemStack stack) {
+        ContainerComponent container = stack.get(DataComponentTypes.CONTAINER);
+        if (container == null) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack singleItem = ItemStack.EMPTY;
+        for (ItemStack containedStack : container.iterateNonEmpty()) {
+            if (singleItem.isEmpty()) {
+                singleItem = containedStack.copyWithCount(1);
+                continue;
+            }
+
+            if (!ItemStack.areItemsAndComponentsEqual(singleItem, containedStack)) {
+                return ItemStack.EMPTY;
+            }
+        }
+
+        return singleItem;
     }
 
     private static String formatTotalCount(int totalCount) {
