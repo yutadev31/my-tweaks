@@ -33,6 +33,7 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric-api": "*",
+    "cloth-config": "*",
     "minecraft": "${minecraft_version}"
   }
 }
