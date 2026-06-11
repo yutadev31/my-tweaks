@@ -53,8 +53,11 @@ abstract class HandledScreenTooltipMixin<T extends ScreenHandler> {
     }
 
     private static ItemStack resolveTargetStack(ItemStack hoveredStack) {
-        ItemStack containedItem = getSingleContainedItem(hoveredStack);
-        return containedItem.isEmpty() ? hoveredStack : containedItem;
+        if (hoveredStack.contains(DataComponentTypes.CONTAINER)) {
+            return getSingleContainedItem(hoveredStack);
+        }
+
+        return hoveredStack;
     }
 
     private static int countMatchingItems(ItemStack stack, ItemStack targetStack) {
