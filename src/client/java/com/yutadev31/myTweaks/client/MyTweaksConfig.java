@@ -21,6 +21,7 @@ public final class MyTweaksConfig {
     private boolean journeyMapChatImportEnabled = true;
     private String windowTitleSuffix = "";
     private boolean itemTooltipTotalCountEnabled = true;
+    private String coordinateCopyFormat = "{x}, {y}, {z}";
 
     private MyTweaksConfig() {
     }
@@ -85,5 +86,13 @@ public final class MyTweaksConfig {
 
     public void setItemTooltipTotalCountEnabled(boolean enabled) {
         this.itemTooltipTotalCountEnabled = enabled;
+    }
+
+    public String getCoordinateCopyFormat() {
+        return coordinateCopyFormat;
+    }
+
+    public void setCoordinateCopyFormat(String format) {
+        this.coordinateCopyFormat = format == null || format.isBlank() ? "{x} {y} {z}" : format;
     }
 }

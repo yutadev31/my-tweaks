@@ -40,6 +40,16 @@ final class MyTweaksConfigScreen {
             .setSaveConsumer(config::setItemTooltipTotalCountEnabled)
             .build());
 
+        general.addEntry(entryBuilder
+            .startStrField(Text.literal("座標コピーのフォーマット"), config.getCoordinateCopyFormat())
+            .setDefaultValue("{x} {y} {z}")
+            .setTooltip(
+                Text.literal("座標コピーボタンで使う文字列です。"),
+                Text.literal("使用可能: {x} {y} {z} は整数座標、{fx} {fy} {fz} は小数座標です。"),
+                Text.literal("キー割り当ては操作設定から「座標をコピー」を設定してください。"))
+            .setSaveConsumer(config::setCoordinateCopyFormat)
+            .build());
+
         builder.setSavingRunnable(() -> {
             MyTweaksConfig.save();
             WindowTitleSuffixApplier.refresh();

@@ -8,5 +8,6 @@ public class MyTweaksClient implements ClientModInitializer {
     public void onInitializeClient() {
         MyTweaksConfig.load();
         JourneyMapChatImportFeature.initialize();
+        CoordinateCopyFeature.initialize();
     }
 }
