@@ -19,6 +19,7 @@ final class MyTweaksConfig {
     private static MyTweaksConfig instance;
 
     private boolean journeyMapChatImportEnabled = true;
+    private String windowTitleSuffix = "";
 
     private MyTweaksConfig() {
     }
@@ -67,5 +68,13 @@ final class MyTweaksConfig {
 
     void setJourneyMapChatImportEnabled(boolean enabled) {
         this.journeyMapChatImportEnabled = enabled;
+    }
+
+    String getWindowTitleSuffix() {
+        return windowTitleSuffix;
+    }
+
+    void setWindowTitleSuffix(String suffix) {
+        this.windowTitleSuffix = suffix == null ? "" : suffix;
     }
 }
