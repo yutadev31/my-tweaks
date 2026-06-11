@@ -4,6 +4,7 @@
   "package": "com.yutadev31.myTweaks.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "HandledScreenTooltipMixin",
     "MinecraftClientTitleInvoker",
     "MinecraftClientWindowTitleMixin"
   ],

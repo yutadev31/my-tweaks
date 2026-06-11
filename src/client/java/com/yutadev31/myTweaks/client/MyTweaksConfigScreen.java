@@ -33,6 +33,13 @@ final class MyTweaksConfigScreen {
             .setSaveConsumer(config::setWindowTitleSuffix)
             .build());
 
+        general.addEntry(entryBuilder
+            .startBooleanToggle(Text.literal("アイテム総数をツールチップ表示"), config.isItemTooltipTotalCountEnabled())
+            .setDefaultValue(true)
+            .setTooltip(Text.literal("インベントリやチェストでアイテムをホバーしたとき、同じアイテムが現在の画面内に合計何個あるかを表示します。"))
+            .setSaveConsumer(config::setItemTooltipTotalCountEnabled)
+            .build());
+
         builder.setSavingRunnable(() -> {
             MyTweaksConfig.save();
             WindowTitleSuffixApplier.refresh();

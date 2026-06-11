@@ -11,7 +11,7 @@ import com.google.gson.JsonParseException;
 
 import net.fabricmc.loader.api.FabricLoader;
 
-final class MyTweaksConfig {
+public final class MyTweaksConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_PATH = FabricLoader.getInstance()
         .getConfigDir()
@@ -20,11 +20,12 @@ final class MyTweaksConfig {
 
     private boolean journeyMapChatImportEnabled = true;
     private String windowTitleSuffix = "";
+    private boolean itemTooltipTotalCountEnabled = true;
 
     private MyTweaksConfig() {
     }
 
-    static void load() {
+    public static void load() {
         if (Files.notExists(CONFIG_PATH)) {
             instance = new MyTweaksConfig();
             save();
@@ -43,14 +44,14 @@ final class MyTweaksConfig {
         }
     }
 
-    static MyTweaksConfig get() {
+    public static MyTweaksConfig get() {
         if (instance == null) {
             load();
         }
         return instance;
     }
 
-    static void save() {
+    public static void save() {
         MyTweaksConfig config = get();
         try {
             Files.createDirectories(CONFIG_PATH.getParent());
@@ -62,19 +63,27 @@ final class MyTweaksConfig {
         }
     }
 
-    boolean isJourneyMapChatImportEnabled() {
+    public boolean isJourneyMapChatImportEnabled() {
         return journeyMapChatImportEnabled;
     }
 
-    void setJourneyMapChatImportEnabled(boolean enabled) {
+    public void setJourneyMapChatImportEnabled(boolean enabled) {
         this.journeyMapChatImportEnabled = enabled;
     }
 
-    String getWindowTitleSuffix() {
+    public String getWindowTitleSuffix() {
         return windowTitleSuffix;
     }
 
-    void setWindowTitleSuffix(String suffix) {
+    public void setWindowTitleSuffix(String suffix) {
         this.windowTitleSuffix = suffix == null ? "" : suffix;
+    }
+
+    public boolean isItemTooltipTotalCountEnabled() {
+        return itemTooltipTotalCountEnabled;
+    }
+
+    public void setItemTooltipTotalCountEnabled(boolean enabled) {
+        this.itemTooltipTotalCountEnabled = enabled;
     }
 }
